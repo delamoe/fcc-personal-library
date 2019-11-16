@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "localStart": "cp .env .envCopy && node -r dotenv/config server.js"
+    "localStart": "node -r dotenv/config server.js"
   },
   "dependencies": {
     "express": "^4.14.0",
@@ -30,5 +30,8 @@
     "hyperdev",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
 }

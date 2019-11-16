@@ -64,6 +64,8 @@ app.use(function(req, res, next) {
     .send('Not Found');
 });
 
+console.log(process.env.NODE_ENV, process.env.PORT);
+
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
   console.log("Listening on port " + process.env.PORT);
