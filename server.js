@@ -21,6 +21,8 @@ app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// small change to test glitch sync
+
 // git-glitch sync code KEEP ABOVE OTHER ROUTES
 // **************************************************
 app.post('/deploy', (request, response) => {
