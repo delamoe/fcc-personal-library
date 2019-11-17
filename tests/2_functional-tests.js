@@ -23,10 +23,15 @@ suite('Functional Tests', function() {
      chai.request(server)
       .get('/api/books')
       .end(function(err, res){
+        // console.log(res.status);
         assert.equal(res.status, 200);
+        // console.log(res.body);
         assert.isArray(res.body, 'response should be an array');
-        assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
+        // console.log(res.body[0].commentCount);
+        assert.property(res.body[0], 'commentCount', 'Books in array should contain commentCount');
+        // console.log(res.body[0].title);
         assert.property(res.body[0], 'title', 'Books in array should contain title');
+        // console.log(res.body[0]._id);
         assert.property(res.body[0], '_id', 'Books in array should contain _id');
         done();
       });
@@ -79,6 +84,22 @@ suite('Functional Tests', function() {
         //done();
       });
       
+    });
+
+  });
+
+  suite('Delete tests', function() {
+
+    suite('DELETE /api/books with title => delete book object/expect book object', function() {
+      
+      test('Test DELETE /api/books with title', function(done) {
+        //done();
+      });
+
+      test('Test DELETE /api/books all books', function(done) {
+        //done();
+      });
+
     });
 
   });
