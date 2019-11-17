@@ -20,11 +20,33 @@ module.exports = function (app) {
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      MongoClient.connect(MONGODB_CONNECTION_STRING, { useUnifiedTopology: true }, function(err, db) {
+        if (err) return console.error(err);
+        var books = db.db('test').collection('books');
+        books.find({}).toArray( function(err, bookList){
+          if (err) return console.error(err);
+          console.log(bookList);
+          res.json(bookList);
+          db.close();    
+        })
+      });
+      // res.send('/api/books.get responding');
     })
     
     .post(function (req, res){
       var title = req.body.title;
-      //response will contain new book object including atleast _id and title
+      //response will contain new book object including at least _id and title
+      MongoClient.connect(MONGODB_CONNECTION_STRING, { useUnifiedTopology: true }, function(err, db) {
+        if (err) return console.error(err);
+        var books = db.db('test').collection('books');
+        books.insertOne({title: title}, function(err, book){
+          if (err) return console.error(err);
+          console.log(book.ops);
+          res.json(book.ops);
+          db.close();
+        })
+      });
+      // res.send('/res/books.post responding');
     })
     
     .delete(function(req, res){

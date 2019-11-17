@@ -12,7 +12,14 @@ var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
 
+var helmet = require('helmet');
+
 var app = express();
+
+// Nothing from my website will be cached in my client as a security measure.
+app.use(helmet.noCache());
+// I will see that the site is powered by 'PHP 4.2.0' even though it isn't as a security measure.
+app.use(helmet.hidePoweredBy('PHP 4.2.0'));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -20,8 +27,6 @@ app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// small change to test glitch sync
 
 // git-glitch sync code KEEP ABOVE OTHER ROUTES
 // **************************************************
