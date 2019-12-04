@@ -33,15 +33,10 @@ suite('Functional Tests', function () {
         chai.request(server)
           .get('/api/books')
           .end(function (err, res) {
-            // console.log(res.status);
             assert.equal(res.status, 200);
-            // console.log(res.body);
             assert.isArray(res.body, 'response should be an array');
-            // console.log(res.body[0].commentCount);
             assert.property(res.body[0], 'commentCount', 'Books in array should contain commentCount');
-            // console.log(res.body[0].title);
             assert.property(res.body[0], 'title', 'Books in array should contain title');
-            // console.log(res.body[0]._id);
             assert.property(res.body[0], '_id', 'Books in array should contain _id');
             done();
           });
@@ -66,9 +61,7 @@ suite('Functional Tests', function () {
             }
           )
           .end(function (err, res) {
-            // console.log(res.status);
             assert.equal(res.status, 200);
-            // console.log(res.body);
             assert.isArray(res.body, 'response should be an array');
             assert.property(res.body[0], 'commentCount', 'Books in array should contain commentCount');
             assert.property(res.body[0], 'title', 'Books in array should contain title');
@@ -83,14 +76,11 @@ suite('Functional Tests', function () {
           .post('/api/books')
           .send({})
           .end(function (err, res) {
-            //  console.log(res.status);
             assert.equal(res.status, 200);
-            //  console.log(res.text);
             assert.equal(res.text, 'Please go back and provide a book title')
             done();
           });
       });
-
     });
 
     suite('GET /api/books => array of books', function () {
@@ -103,27 +93,29 @@ suite('Functional Tests', function () {
           .send(
             {
               _id: id,
-              title: 'Functional Test GET an array'
+              title: 'Test GET /api/books'
             }
           )
           .end(function (err, res) {
             chai.request(server)
               .get('/api/books')
               .end(function (err, res) {
-                // console.log(res.status);
                 assert.equal(res.status, 200);
-                // console.log(res.body);
                 assert.isArray(res.body, 'response should be an array');
+                assert.property(res.body[0], 'commentCount', 'Books in array should contain commentCount');
+                assert.property(res.body[0], 'title', 'Books in array should contain title');
+                assert.property(res.body[0], '_id', 'Books in array should contain _id');
                 done();
               });
           });
       });
-
     });
 
     suite('GET /api/books/[id] => book object with [id]', function () {
 
       test('Test GET /api/books/[id] with id not in db', function (done) {
+        // this test implies two tests, I would make them unique
+        // except for fcc requirement to keep tests in order
         this.timeout(15000);
         chai.request(server)
           // checking with an invalid _id: will error in ObjectId()
@@ -150,28 +142,22 @@ suite('Functional Tests', function () {
           .send(
             {
               _id: id,
-              title: 'Functional Test GET with valid _id in db'
+              title: 'Test GET /api/books/[id] with valid id in db'
             }
           )
           .end(function (err, res) {
             chai.request(server)
               .get('/api/books')
               .end(function (err, res) {
-                // console.log(res.status);
                 assert.equal(res.status, 200);
-                // console.log(res.body);
                 assert.isArray(res.body, 'response should be an array');
-                // console.log(res.body[0].commentCount);
                 assert.property(res.body[0], 'commentCount', 'Books in array should contain commentCount');
-                // console.log(res.body[0].title);
                 assert.property(res.body[0], 'title', 'Books in array should contain title');
-                // console.log(res.body[0]._id);
                 assert.property(res.body[0], '_id', 'Books in array should contain _id');
                 done();
               });
           });
       });
-
     });
 
     suite('POST /api/books/[id] => add comment/expect book object with id', function () {
@@ -184,7 +170,7 @@ suite('Functional Tests', function () {
           .send(
             {
               _id: id,
-              title: 'Functional Test POST Comments'
+              title: 'Test POST /api/books/[id] with comment'
             }
           )
           .end(function (err, res) {
@@ -196,14 +182,16 @@ suite('Functional Tests', function () {
                   .get(`/api/books/${id}`)
                   .end(function (err, res) {
                     assert.equal(res.status, 200);
-                    // console.log(res.body);
-                    assert.property(res.body, 'comments');
+                    assert.isObject(res.body, 'response should be an object');
+                    assert.property(res.body, '_id', 'Books in array should contain _id');
+                    assert.property(res.body, 'title', 'Books in array should contain title');
+                    assert.property(res.body, 'comments', 'Books in array should contain comments');
+                    assert.property(res.body, 'commentCount', 'Books in array should contain commentCount');
                     done();
                   });
               });
           });
       });
-
     });
 
     suite('Delete tests', function () {
@@ -213,6 +201,9 @@ suite('Functional Tests', function () {
         test('Test DELETE /api/books with title', function (done) {
           // I'm not sure if this is supposed to pass when a book title is passed in
           // or fail because a book id was not used
+          // I've set this to fail without a valid book id as per
+          // 7. I can delete /api/books/{_id} to delete a book from the collection. Returned will be 'delete successful' if successful.
+          // 8. If I try to request a book that doesn't exist I will get a 'no book exists' message.
           this.timeout(15000);
           var id = new require('mongodb').ObjectID();
           var bad_id = new require('mongodb').ObjectID();
@@ -241,18 +232,12 @@ suite('Functional Tests', function () {
           chai.request(server)
             .delete('/api/books')
             .end(function (err, res) {
-              // console.log(res.status);
               assert.equal(res.status, 200);
-              console.log(res.text);
               assert.match(res.text, /complete delete successful: \d+ books deleted/);
               done();
             });
         });
-
       });
-
     });
-
   });
-
 });

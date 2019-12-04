@@ -80,7 +80,7 @@ module.exports = function (app) {
         var books = db.db('test').collection('books');
         books.insertOne(
           {
-            _id: req.body._id,
+            _id: ObjectId(req.body._id),
             title: req.body.title,
             commentCount: 0
           }, function (err, book) {
@@ -120,10 +120,14 @@ module.exports = function (app) {
           books.findOne({ _id: ObjectId(req.params.id) }, function (err, book) {
             if (err) return console.error(err);
             if (book === null) return res.send('Please check the book id is valid');
-            res.json({ "_id": book._id, "title": book.title, "comments": book.comments });
+            res.json({
+              "_id": book._id,
+              "title": book.title,
+              "comments": book.comments,
+              "commentCount": book.commentCount});
             db.close();
-          })
-        })
+          });
+        });
       }
     })
 
@@ -139,24 +143,27 @@ module.exports = function (app) {
           if (err) return console.error(err);
           var books = db.db('test').collection('books');
           books.updateOne(
-            { _id: ObjectId(req.params.id) },
+            { _id: ObjectId(bookid) },
             {
               $push: { comments: comment },
-              $inc: { commentCount: +1 }
-            },
-            { upsert: true },
-            function (err, book) {
-              if (err) return console.error(err);
-              if (book === null) return res.send('Please check the book id is valid');
-              res.json({ "_id": book._id, "title": book.title, "comments": book.comments });
-              db.close();
+              $inc: { commentCount: 1 }
             });
+          books.findOne({ _id: ObjectId(bookid) }, function (err, book) {
+            if (err) return console.error(err);
+            // console.log(book);
+            if (book === null) return res.send("Please check the book id is valid");
+            res.json({
+              "_id": book._id,
+              "title": book.title,
+              "comments": book.comments,
+              "commentCount": book.commentCount});
+            db.close();
+          });
         });
       }
     })
 
     .delete(function (req, res) {
-      var bookid = req.params.id;
       // console.log(req.params.id);
       // console.log(req.params.id.match(checkForHexRegExp));
       if (!req.params.id.match(checkForHexRegExp))
@@ -164,10 +171,10 @@ module.exports = function (app) {
       MongoClient.connect(MONGODB_CONNECTION_STRING, { useUnifiedTopology: true }, function (err, db) {
         if (err) return console.error(err);
         var books = db.db('test').collection('books');
-        books.deleteOne({ _id: bookid }, function (err, deleted) {
+        books.deleteOne({ _id: ObjectId(req.params.id) }, function (err, CommandResult) {
           if (err) return console.error(err);
-          // console.log(deleted.result.n);
-          if (deleted.result.n > 0) res.send(`delete successful`);
+          // console.log(CommandResult);
+          if (CommandResult.result.n > 0) res.send(`delete successful`);
           else res.send('no book exists');
           db.close();
         });
