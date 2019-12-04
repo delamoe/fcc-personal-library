@@ -118,14 +118,14 @@ suite('Functional Tests', function () {
         // except for fcc requirement to keep tests in order
         this.timeout(15000);
         chai.request(server)
-          // checking with an invalid _id: will error in ObjectId()
+          // checking with an invalid _id: will result in error in ObjectId()
           .get(`/api/books/dtheryjh`)
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.text, 'Please check the book id is valid')
           });
         chai.request(server)
-          // checking with a incorrect valid unique _id
+          // checking with a incorrect valid unique _id will result in NULL
           .get(`/api/books/${new require('mongodb').ObjectID()}`)
           .end(function (err, res) {
             assert.equal(res.status, 200);
