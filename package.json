@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "localStart": "node -r dotenv/config server.js"
+    "localStart": "node -r dotenv/config server.js",
+    "test": "mocha --timeout 10000"
   },
   "dependencies": {
     "express": "^4.17.1",
